@@ -48,7 +48,6 @@ const createCharge = asyncHandler(async (req, res) => {
 // handle webhook event
 const webhookController = async (req, res) => {
   const sig = req.headers["stripe-signature"];
-  console.log("🚀 ~ webhookController ~ sig:", sig);
 
   let event;
 

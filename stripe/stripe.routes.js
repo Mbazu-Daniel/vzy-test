@@ -13,7 +13,7 @@ app.use(
   // #swagger.tags = ["Stripe"]
 );
 
-stripeRouter.use(authenticateUser, stripeAuthMiddleware);
+stripeRouter.use( stripeAuthMiddleware);
 
 stripeRouter.post(
   "/charge",
