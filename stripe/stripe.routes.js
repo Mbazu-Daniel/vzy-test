@@ -1,12 +1,18 @@
 import express from "express";
-import {
-  createCharge,
-  webhookController,
-  
-} from "./stripe.controllers.js";
+import { createCharge, webhookController } from "./stripe.controllers.js";
 import stripeAuthMiddleware from "../middleware/stripeAuth.js";
 import { authenticateUser } from "../middleware/authenticate.js";
 const stripeRouter = express.Router();
+
+const app = express();
+
+app.use(
+  "/stripe",
+  stripeRouter
+
+  // #swagger.tags = ["Stripe"]
+);
+
 stripeRouter.use(authenticateUser, stripeAuthMiddleware);
 
 stripeRouter.post(
