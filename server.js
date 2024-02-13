@@ -2,9 +2,16 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRouter from "./auth/auth.routes.js";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
+
+// ROUTES
+import authRouter from "./auth/auth.routes.js";
+import userRouter from "./users/users.routes.js";
+import stripeRouter from "./stripe/stripe.routes.js";
+
+// other local imports
+import { invalidURL, errorHandler } from "./utils/errors.js";
 
 dotenv.config();
 
@@ -23,6 +30,12 @@ app.get("/", (req, res) => {
 
 // ENDPOINTS
 app.use("/auth", authRouter);
+app.use("/user", userRouter);
+app.use("/stripe", stripeRouter);
+
+// ERROR CHECKER
+app.use(invalidURL);
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 

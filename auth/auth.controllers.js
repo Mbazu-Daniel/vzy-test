@@ -58,7 +58,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 		const lowercaseEmail = email.toLowerCase();
 
-		const user = await User.findOne({ lowercaseEmail });
+		const user = await User.findOne({ email: lowercaseEmail });
 
 		if (!user) {
 			return res.status(404).json("Email or  password not found");

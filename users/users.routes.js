@@ -1,15 +1,16 @@
 import express from "express";
 import {
-	getAllUsers,
-	getSingleUser,
-	deleteUser,
-	updateUser,
-	blockUser,
-	unblockUser,
+  getAllUsers,
+  getSingleUser,
+  deleteUser,
+  updateUser,
+  blockUser,
+  unblockUser,
 } from "./users.controllers.js";
-// import { verifyUser, verifyLogin } from "../middleware/verifyToken.js";
-const userRouter = express.Router();
+import { authenticateUser } from "../middleware/authenticate.js";
 
+const userRouter = express.Router();
+userRouter.use(authenticateUser);
 // ROUTES
 
 userRouter.get("/", getAllUsers);
