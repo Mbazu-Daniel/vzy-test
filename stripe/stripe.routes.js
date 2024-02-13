@@ -2,7 +2,7 @@ import express from "express";
 import {
   createCharge,
   webhookController,
-  getWebhookList,
+  
 } from "./stripe.controllers.js";
 import stripeAuthMiddleware from "../middleware/stripeAuth.js";
 import { authenticateUser } from "../middleware/authenticate.js";

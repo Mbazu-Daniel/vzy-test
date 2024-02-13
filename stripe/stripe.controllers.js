@@ -48,6 +48,7 @@ const createCharge = asyncHandler(async (req, res) => {
 // handle webhook event
 const webhookController = async (req, res) => {
   const sig = req.headers["stripe-signature"];
+  console.log("🚀 ~ webhookController ~ sig:", sig);
 
   let event;
 
@@ -63,11 +64,15 @@ const webhookController = async (req, res) => {
     return;
   }
 
+  console.log(event.type);
+  console.log(event.data.object);
+  console.log(event.data.object.id);
+
   switch (event.type) {
-    case "charge.succeeded": {
-      const chargeSucceeded = event.data.object;
+    case "payment_intent.succeeded": {
+      const paymentIntent = event.data.object;
       const user = await User.findOneAndUpdate(
-        { paymentTransactionId: chargeSucceeded.id },
+        { paymentTransactionId: paymentIntent.id },
         { paymentStatus: "paid" },
         { new: true }
       );
@@ -79,7 +84,7 @@ const webhookController = async (req, res) => {
       }
       break;
     }
-    case "charge.failed": {
+    case "payment_intent.payment_failed": {
       const chargeFailed = event.data.object;
 
       console.log("Payment failed for chargeSucceeded:", chargeFailed.id);
@@ -92,7 +97,5 @@ const webhookController = async (req, res) => {
 
   res.status(200).end();
 };
-
-
 
 export { createCharge, webhookController };
