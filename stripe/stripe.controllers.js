@@ -1,6 +1,10 @@
 import stripe from "stripe";
 import asyncHandler from "express-async-handler";
 import User from "../users/users.models.js";
+import dotenv from "dotenv";
+dotenv.config();
+
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // handle charge creation
 const createCharge = asyncHandler(async (req, res) => {
@@ -47,26 +51,20 @@ const createCharge = asyncHandler(async (req, res) => {
 
 // handle webhook event
 const webhookController = async (req, res) => {
-  const sig = req.headers["stripe-signature"];
-
   let event;
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (error) {
-    console.error("Error processing webhook:", error);
-    res.status(400).json(`Webhook Error: ${error.message}`);
-    return;
+  if (endpointSecret) {
+    const sig = req.headers["stripe-signature"];
+
+
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (error) {
+      console.error("Error processing webhook:", error);
+      res.status(400).json(`Webhook Error: ${error.message}`);
+      return;
+    }
   }
-
-  console.log(event.type);
-  console.log(event.data.object);
-  console.log(event.data.object.id);
-
   switch (event.type) {
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
