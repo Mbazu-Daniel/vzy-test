@@ -1,7 +1,7 @@
 import stripe from "stripe";
 import asyncHandler from "express-async-handler";
 import User from "../users/users.models.js";
-import dotenv from "dotenv";
+ import dotenv from "dotenv";
 dotenv.config();
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -19,6 +19,7 @@ const createCharge = asyncHandler(async (req, res) => {
       source,
       description: "Charge test",
     });
+
 
     // Update user paymentTransactionId
     const updatedUser = await User.findByIdAndUpdate(
@@ -55,6 +56,7 @@ const webhookController = async (req, res) => {
 
   if (endpointSecret) {
     const sig = req.headers["stripe-signature"];
+
 
 
     try {
