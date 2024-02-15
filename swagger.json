@@ -139,31 +139,6 @@
         }
       }
     },
-    "/stripe/webhook": {
-      "post": {
-        "tags": [
-          "Stripe"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "stripe-signature",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
     "/user/": {
       "get": {
         "tags": [

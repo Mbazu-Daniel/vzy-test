@@ -51,7 +51,7 @@ const webhookController = async (req, res) => {
 
   if (endpointSecret) {
     const sig = req.headers["stripe-signature"];
-    console.log("🚀 ~ webhookController ~ sig:", sig)
+ 
 
     try {
       event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);

@@ -27,6 +27,8 @@ stripeRouter.post(
   bodyParser.raw({ type: "application/json" }),
 
   webhookController
+
+  // #swagger.ignore = true
 );
 
 export default stripeRouter;
