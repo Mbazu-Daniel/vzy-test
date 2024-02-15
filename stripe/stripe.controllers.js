@@ -47,11 +47,11 @@ const createCharge = asyncHandler(async (req, res) => {
 
 // handle webhook event
 const webhookController = async (req, res) => {
-  const sig = req.headers["stripe-signature"];
   let event;
 
   if (endpointSecret) {
-    console.log("🚀 ~ webhookController ~ sig:", sig);
+    const sig = req.headers["stripe-signature"];
+    console.log("🚀 ~ webhookController ~ sig:", sig)
 
     try {
       event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
@@ -62,14 +62,15 @@ const webhookController = async (req, res) => {
     }
   }
   switch (event.type) {
-    case "payment_intent.succeeded": {
-      const paymentIntent = event.data.object;
+    case "charge.succeeded": {
+      const chargeDetails = event.data.object;
       const user = await User.findOneAndUpdate(
-        { paymentTransactionId: paymentIntent.id },
+        { paymentTransactionId: chargeDetails.id },
         { paymentStatus: "paid" },
         { new: true }
       );
 
+   
       if (!user) {
         console.log("No transaction done for this user:");
       } else {
@@ -77,7 +78,7 @@ const webhookController = async (req, res) => {
       }
       break;
     }
-    case "payment_intent.payment_failed": {
+    case "charge.failed": {
       const chargeFailed = event.data.object;
 
       console.log("Payment failed for chargeSucceeded:", chargeFailed.id);

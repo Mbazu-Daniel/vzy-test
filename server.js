@@ -29,8 +29,8 @@ app.use(
       req.rawBody = buf;
     },
   })
-);
-app.use(bodyParser.raw({ type: "application/json" }));
+  );
+  app.use(bodyParser.raw({ type: "application/json" }));
 
 app.use(cors());
 app.use(cookieParser());

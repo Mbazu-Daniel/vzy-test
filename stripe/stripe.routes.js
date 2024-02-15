@@ -2,6 +2,7 @@ import express from "express";
 import { createCharge, webhookController } from "./stripe.controllers.js";
 import stripeAuthMiddleware from "../middleware/stripeAuth.js";
 import { authenticateUser } from "../middleware/authenticate.js";
+import bodyParser from "body-parser";
 const stripeRouter = express.Router();
 
 const app = express();
@@ -13,18 +14,17 @@ app.use(
   // #swagger.tags = ["Stripe"]
 );
 
-stripeRouter.use(authenticateUser, stripeAuthMiddleware);
-
 stripeRouter.post(
   "/charge",
-
+  authenticateUser,
+  stripeAuthMiddleware,
   createCharge
 );
 
 // Route for handling webhook events
 stripeRouter.post(
   "/webhook",
-  express.raw({ type: "application/json" }),
+  bodyParser.raw({ type: "application/json" }),
 
   webhookController
 );
