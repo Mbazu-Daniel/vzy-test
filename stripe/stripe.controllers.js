@@ -1,27 +1,27 @@
 import stripe from "stripe";
 import asyncHandler from "express-async-handler";
 import User from "../users/users.models.js";
- import dotenv from "dotenv";
+import dotenv from "dotenv";
 dotenv.config();
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // handle charge creation
 const createCharge = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-  const { amount, source } = req.body;
-  const stripeClient = stripe(req.stripeApiKey);
-
   try {
+    const userId = req.user.id;
+    const { amount } = req.body;
+
+    // Ensure req.stripeApiKey is properly set
+    const stripeClient = stripe(req.stripeApiKey);
+
     const charge = await stripeClient.charges.create({
       amount,
       currency: "usd",
-      source,
+      source: "tok_visa",
       description: "Charge test",
     });
 
-
-    // Update user paymentTransactionId
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { paymentTransactionId: charge.id },
@@ -30,37 +30,31 @@ const createCharge = asyncHandler(async (req, res) => {
 
     if (!updatedUser) {
       console.log("User not found for userId:", userId);
-    } else {
-      console.log(
-        "User paymentTransactionId updated successfully:",
-        updatedUser
-      );
+      return res.status(500).json({ error: "User not found" });
     }
 
-    res.status(200).json("Payment successful");
+    console.log("User paymentTransactionId updated successfully:", updatedUser);
+    res.status(200).json({ message: "Payment successful" });
   } catch (error) {
     console.error("Error in processing payment", error);
-
     let msg = "An error occurred while processing your payment";
-
     if (error.type === "StripeCardError") {
       msg = error.message;
     }
-    res.status(500).json("Payment unsuccessful", msg);
+    res.status(500).json({ error: msg });
   }
 });
 
 // handle webhook event
 const webhookController = async (req, res) => {
+  const sig = req.headers["stripe-signature"];
   let event;
 
   if (endpointSecret) {
-    const sig = req.headers["stripe-signature"];
-
-
+    console.log("🚀 ~ webhookController ~ sig:", sig);
 
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
     } catch (error) {
       console.error("Error processing webhook:", error);
       res.status(400).json(`Webhook Error: ${error.message}`);

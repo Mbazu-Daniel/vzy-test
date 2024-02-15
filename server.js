@@ -22,17 +22,19 @@ dotenv.config();
 
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
-app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
-  cors({
-    origin: ["*"],
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
-    credentials: true,
+  bodyParser.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    },
   })
 );
+app.use(bodyParser.raw({ type: "application/json" }));
+
+app.use(cors());
+app.use(cookieParser());
+app.use(cors());
 
 // compress using gzip
 app.use(compression());
