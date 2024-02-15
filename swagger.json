@@ -131,9 +131,6 @@
                 "properties": {
                   "amount": {
                     "example": "any"
-                  },
-                  "source": {
-                    "example": "any"
                   }
                 }
               }
@@ -163,9 +160,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "403": {
-            "description": "Forbidden"
           }
         }
       }
