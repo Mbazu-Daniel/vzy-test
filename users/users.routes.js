@@ -20,7 +20,7 @@ app.use(
   // #swagger.tags = ["User"]
 );
 
-userRouter.use(authenticateUser);
+userRouter.use("/", authenticateUser);
 // ROUTES
 
 userRouter.get("/", getAllUsers);
